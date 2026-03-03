@@ -57,21 +57,52 @@ export default defineType({
       of: [{ type: 'mediaItem' }],
     }),
     defineField({
-      name: 'gridSize',
-      title: 'Grid Size (Homepage)',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'S — Small (1x1)', value: 'S' },
-          { title: 'M — Medium (2x1)', value: 'M' },
-          { title: 'L — Large (2x2)', value: 'L' },
-          { title: 'TALL — Tall (1x2)', value: 'TALL' },
-          { title: 'WIDE — Wide (2x1)', value: 'WIDE' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'M',
-      description: 'Controls how large this project appears on the homepage grid.',
+      name: 'homeFrames',
+      title: 'Homepage Frames',
+      type: 'array',
+      description: 'Pick which images from this project appear on the homepage, and choose their size. Drag to reorder.',
+      of: [
+        {
+          type: 'object',
+          name: 'homeFrame',
+          fields: [
+            {
+              name: 'image',
+              type: 'image',
+              title: 'Image',
+              options: { hotspot: true },
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'gridSize',
+              type: 'string',
+              title: 'Grid Size',
+              options: {
+                list: [
+                  { title: 'S — Small (1x1)', value: 'S' },
+                  { title: 'M — Medium (2x1)', value: 'M' },
+                  { title: 'L — Large (2x2)', value: 'L' },
+                  { title: 'TALL — Tall (1x2)', value: 'TALL' },
+                  { title: 'WIDE — Wide (2x1)', value: 'WIDE' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'M',
+            },
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alt text (optional)',
+            },
+          ],
+          preview: {
+            select: { media: 'image', size: 'gridSize' },
+            prepare({ media, size }) {
+              return { title: `Frame — ${size || 'M'}`, media };
+            },
+          },
+        },
+      ],
     }),
     defineField({
       name: 'category',

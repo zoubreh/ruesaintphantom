@@ -1,19 +1,19 @@
 import { client } from './sanity';
 import {
   indexProjectsQuery,
-  projectGridQuery,
+  homepageFramesQuery,
   allProjectSlugsQuery,
   projectBySlugQuery,
   siteSettingsQuery,
   infoPageQuery,
   type IndexProjectsResult,
-  type ProjectGridQueryResult,
+  type HomepageFramesQueryResult,
   type AllProjectSlugsResult,
   type ProjectBySlugResult,
   type SiteSettingsResult,
   type InfoPageResult,
 } from './queries';
-import type { ProjectGridItem } from '@/types/grid';
+import type { HomepageGridItem } from '@/types/grid';
 
 const REVALIDATE = 60;
 
@@ -32,12 +32,13 @@ export async function getIndexProjects(): Promise<IndexProjectsResult> {
   );
 }
 
-/** Homepage grid items — one cover per project with gridSize. */
-export async function getProjectsForGrid(): Promise<ProjectGridItem[]> {
-  return safeFetch(
-    () => client.fetch<ProjectGridQueryResult>(projectGridQuery, {}, { next: { revalidate: REVALIDATE } }),
+/** Homepage frames — multiple curated frames per project, flattened into one grid. */
+export async function getHomepageFrames(): Promise<HomepageGridItem[]> {
+  const rows = await safeFetch(
+    () => client.fetch<HomepageFramesQueryResult>(homepageFramesQuery, {}, { next: { revalidate: REVALIDATE } }),
     []
   );
+  return rows.flatMap((r) => r.frames).filter((f) => f.image?.asset?._ref);
 }
 
 /** Ordered slug list for next/prev navigation. */

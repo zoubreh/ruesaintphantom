@@ -25,6 +25,13 @@ export interface ProjectCredit {
   url?: string | null;
 }
 
+export interface HomeFrame {
+  _key: string;
+  image: SanityImage;
+  gridSize?: GridSize | null;
+  alt?: string | null;
+}
+
 export interface Project {
   _id: string;
   _type: 'project';
@@ -36,7 +43,7 @@ export interface Project {
   description?: string | null;
   coverImage: SanityImage;
   gallery?: MediaItem[] | null;
-  gridSize?: GridSize | null;
+  homeFrames?: HomeFrame[] | null;
   category?: string | null;
   indexOrder?: number | null;
   published?: boolean | null;

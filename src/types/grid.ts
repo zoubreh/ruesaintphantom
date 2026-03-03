@@ -1,13 +1,13 @@
 import type { SanityImage, GridSize } from './sanity';
 
-/** One project tile in the homepage grid. One entry per project. */
-export interface ProjectGridItem {
-  _id: string;
-  slug: string;
-  title: string;
+/** One frame on the homepage grid. Multiple frames can belong to the same project. */
+export interface HomepageGridItem {
+  id: string;
+  projectSlug: string;
+  projectTitle: string;
   year?: number | null;
   client?: string | null;
-  category?: string | null;
-  coverImage: SanityImage;
+  image: SanityImage;
   gridSize: GridSize;
+  alt?: string | null;
 }

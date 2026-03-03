@@ -1,5 +1,5 @@
 import type { Project, SiteSettings, InfoPage } from '@/types/sanity';
-import type { ProjectGridItem } from '@/types/grid';
+import type { HomepageGridItem } from '@/types/grid';
 
 const projectFields = `
   _id,
@@ -21,7 +21,12 @@ const projectFields = `
     credit,
     alt
   },
-  gridSize,
+  homeFrames[] {
+    _key,
+    image,
+    gridSize,
+    alt
+  },
   category,
   indexOrder,
   published,
@@ -33,16 +38,34 @@ export const indexProjectsQuery = `*[_type == "project" && published == true] | 
   ${projectFields}
 }`;
 
-/** Homepage grid: one cover per project with gridSize for editorial layout. */
-export const projectGridQuery = `*[_type == "project" && published == true] | order(indexOrder asc) {
-  _id,
-  title,
-  "slug": slug.current,
-  year,
-  client,
-  category,
-  coverImage,
-  "gridSize": coalesce(gridSize, "M")
+/**
+ * Homepage grid: flatten homeFrames from all projects into one array.
+ * Each frame carries its parent project info for linking.
+ * Fallback: if a project has no homeFrames, use the coverImage as a single M frame.
+ */
+export const homepageFramesQuery = `*[_type == "project" && published == true] | order(indexOrder asc) {
+  "frames": select(
+    defined(homeFrames) && length(homeFrames) > 0 => homeFrames[] {
+      "id": ^._id + "-" + _key,
+      "projectSlug": ^.slug.current,
+      "projectTitle": ^.title,
+      "year": ^.year,
+      "client": ^.client,
+      image,
+      "gridSize": coalesce(gridSize, "M"),
+      alt
+    },
+    [{
+      "id": _id + "-cover",
+      "projectSlug": slug.current,
+      "projectTitle": title,
+      "year": year,
+      "client": client,
+      "image": coverImage,
+      "gridSize": "M",
+      "alt": title
+    }]
+  )
 }`;
 
 /** All published project slugs in order, for next/prev navigation. */
@@ -76,7 +99,7 @@ export const infoPageQuery = `*[_type == "infoPage"][0] {
 }`;
 
 export type IndexProjectsResult = (Omit<Project, 'slug'> & { slug: string })[];
-export type ProjectGridQueryResult = ProjectGridItem[];
+export type HomepageFramesQueryResult = { frames: HomepageGridItem[] }[];
 export type ProjectBySlugResult = Omit<Project, 'slug'> & { slug: string } | null;
 export type SiteSettingsResult = SiteSettings | null;
 export type InfoPageResult = InfoPage | null;
