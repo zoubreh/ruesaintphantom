@@ -1,4 +1,5 @@
 import { HeaderNav } from '@/components/HeaderNav';
+import { Footer } from '@/components/Footer';
 import { ProjectTitleProvider } from '@/context/ProjectTitleContext';
 import { ScrollRestoration } from '@/components/ScrollRestoration';
 
@@ -17,6 +18,7 @@ export default function SiteLayout({
         {children}
         {modal}
       </main>
+      <Footer />
     </ProjectTitleProvider>
   );
 }

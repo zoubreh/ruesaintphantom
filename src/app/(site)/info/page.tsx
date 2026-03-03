@@ -34,13 +34,38 @@ export default async function InfoPage() {
       info.programmingBy);
 
   if (!info || !hasContent) {
+    const year = new Date().getFullYear();
     return (
-      <div className="max-w-prose mx-auto px-4 py-16 text-neutral-500 text-sm">
-        <p>
-          {!info
-            ? 'No info content yet.'
-            : 'Add your content in Sanity Studio at /studio.'}
-        </p>
+      <div className="max-w-prose mx-auto px-4 py-12 md:py-16">
+        <div className="space-y-10 text-sm text-neutral-300">
+          <InfoSection heading="Studio">
+            <p className="text-neutral-200">RUESAINTPHANTOM</p>
+          </InfoSection>
+
+          <InfoSection heading="Contact">
+            <a
+              href="mailto:contact@ruesaintphantom.com"
+              className="text-neutral-200 underline hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+            >
+              contact@ruesaintphantom.com
+            </a>
+          </InfoSection>
+
+          <InfoSection heading="Social">
+            <a
+              href="https://instagram.com/ruesaintphantom"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-neutral-200 underline hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+            >
+              Instagram
+            </a>
+          </InfoSection>
+
+          <p className="text-neutral-500 text-xs pt-8">
+            &copy; {year} RUESAINTPHANTOM. All rights reserved.
+          </p>
+        </div>
       </div>
     );
   }

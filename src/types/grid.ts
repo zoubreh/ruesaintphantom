@@ -8,6 +8,6 @@ export interface FlattenedGridItem {
   year?: number | null;
   client?: string | null;
   type: 'image' | 'video';
-  image: SanityImage;
+  image: SanityImage | null;
   alt?: string | null;
 }

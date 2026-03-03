@@ -38,7 +38,6 @@ export async function getFlattenedGridItems(): Promise<FlattenedGridItem[]> {
   );
   const items: FlattenedGridItem[] = [];
   for (const item of rows.flatMap((p) => p.items)) {
-    if (!item.image?.asset?._ref) continue;
     items.push({
       id: item.id,
       projectSlug: item.projectSlug,
@@ -46,7 +45,7 @@ export async function getFlattenedGridItems(): Promise<FlattenedGridItem[]> {
       year: item.year,
       client: item.client,
       type: item.type,
-      image: item.image,
+      image: item.image?.asset?._ref ? item.image : null,
       alt: item.alt ?? undefined,
     });
   }
