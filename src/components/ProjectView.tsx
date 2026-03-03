@@ -2,13 +2,17 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useProjectTitle } from '@/context/ProjectTitleContext';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 import { MediaViewer } from './MediaViewer';
+import {
+  MODAL_OPEN_DURATION,
+  MODAL_CLOSE_DURATION,
+  EASE_OUT_EXPO,
+} from '@/lib/constants';
 import type { IndexProject } from '@/types/project';
-
-const CLOSE_DURATION = 0.2;
 
 export function ProjectView({
   project,
@@ -20,7 +24,10 @@ export function ProjectView({
   const router = useRouter();
   const { setProjectTitle } = useProjectTitle();
   const [isClosing, setIsClosing] = useState(false);
-  useBodyScrollLock(isModal && !isClosing);
+
+  // Scroll lock stays active for the ENTIRE modal lifetime (no premature unlock)
+  useBodyScrollLock(isModal);
+  const focusTrapRef = useFocusTrap(isModal && !isClosing);
 
   useEffect(() => {
     setProjectTitle(project.title);
@@ -39,16 +46,30 @@ export function ProjectView({
     if (isClosing) router.back();
   }, [isClosing, router]);
 
+  // ESC key handler on modal itself (not just MediaViewer)
+  useEffect(() => {
+    if (!isModal) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [isModal, close]);
+
+  const duration = isClosing ? MODAL_CLOSE_DURATION : MODAL_OPEN_DURATION;
+
   const content = (
     <>
-      <div className="sticky top-[52px] z-10 flex items-center justify-end px-4 py-2 md:px-6">
+      <div className="sticky top-0 z-10 flex items-center justify-end px-4 py-3 md:px-6">
         <button
           type="button"
           onClick={close}
-          className="min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+          className="min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
           aria-label="Close project"
         >
-          <span className="text-2xl leading-none" aria-hidden>×</span>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <path d="M4 4L14 14M14 4L4 14" />
+          </svg>
         </button>
       </div>
       <div className="px-4 pb-12 md:px-6">
@@ -79,18 +100,37 @@ export function ProjectView({
 
   if (isModal) {
     return (
-      <AnimatePresence>
+      <div
+        ref={focusTrapRef}
+        className="fixed inset-0 z-40"
+        role="dialog"
+        aria-modal="true"
+        aria-label={project.title}
+      >
+        {/* Backdrop — click outside to close */}
         <motion.div
-          className="fixed inset-0 z-40 bg-surface overflow-y-auto"
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: isClosing ? 0 : 1, scale: isClosing ? 0.98 : 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: CLOSE_DURATION, ease: 'easeOut' }}
+          className="absolute inset-0 bg-surface"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isClosing ? 0 : 1 }}
+          transition={{ duration, ease: EASE_OUT_EXPO }}
+          onClick={close}
+          aria-hidden="true"
+        />
+        {/* Content — slides up */}
+        <motion.div
+          className="absolute inset-0 overflow-y-auto modal-scroll-container"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{
+            opacity: isClosing ? 0 : 1,
+            y: isClosing ? 20 : 0,
+          }}
+          transition={{ duration, ease: EASE_OUT_EXPO }}
           onAnimationComplete={onCloseAnimationComplete}
+          onClick={(e) => e.stopPropagation()}
         >
           {content}
         </motion.div>
-      </AnimatePresence>
+      </div>
     );
   }
 

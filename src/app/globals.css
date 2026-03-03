@@ -12,3 +12,9 @@ button:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
+
+/* Prevent iOS rubber-band scrolling on modal content */
+.modal-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}

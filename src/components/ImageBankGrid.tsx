@@ -38,7 +38,7 @@ export function ImageBankGrid({ items }: { items: FlattenedGridItem[] }) {
     <div ref={containerRef} className="w-full max-w-full min-w-0 overflow-hidden px-3 sm:px-4 md:px-6 pt-4 md:pt-6">
       <div className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {visible.map((item, i) => (
-          <ImageBankCell key={item.id} item={item} priority={i < 2} />
+          <ImageBankCell key={item.id} item={item} priority={i < 2} index={i} />
         ))}
       </div>
       <div data-sentinel className="h-1 w-full" aria-hidden />

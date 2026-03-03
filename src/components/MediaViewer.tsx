@@ -1,10 +1,15 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { urlFor, getBlurDataURL } from '@/lib/image';
-import { SWIPE_THRESHOLD, GALLERY_IMAGE_SIZE } from '@/lib/constants';
+import {
+  SWIPE_THRESHOLD,
+  SWIPE_VELOCITY,
+  GALLERY_IMAGE_SIZE,
+  CAROUSEL_SLIDE_DURATION,
+} from '@/lib/constants';
 import type { IndexProject } from '@/types/project';
 import type { MediaItem } from '@/types/sanity';
 
@@ -18,22 +23,39 @@ function getMediaItems(project: IndexProject): MediaItem[] {
   return gallery;
 }
 
+/* Directional slide variants */
+const slideVariants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? 80 : -80,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? -80 : 80,
+    opacity: 0,
+  }),
+};
+
 export function MediaViewer({ project, onClose }: { project: IndexProject; onClose: () => void }) {
   const items = getMediaItems(project);
   const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
   const current = items[index];
-  const containerRef = useRef<HTMLDivElement>(null);
-  const touchStartX = useRef<number>(0);
-  const touchEndX = useRef<number>(0);
 
   const goPrev = useCallback(() => {
+    setDirection(-1);
     setIndex((i) => (i <= 0 ? items.length - 1 : i - 1));
   }, [items.length]);
 
   const goNext = useCallback(() => {
+    setDirection(1);
     setIndex((i) => (i >= items.length - 1 ? 0 : i + 1));
   }, [items.length]);
 
+  // Keyboard: arrows + ESC (ESC also handled in ProjectView, but kept here for standalone)
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -44,20 +66,35 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
     return () => window.removeEventListener('keydown', handler);
   }, [onClose, goPrev, goNext]);
 
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.targetTouches[0].clientX;
-  }, []);
+  // Preload adjacent images via <link rel="preload">
+  useEffect(() => {
+    if (items.length <= 1) return;
 
-  const onTouchEnd = useCallback(() => {
-    const diff = touchStartX.current - touchEndX.current;
-    if (Math.abs(diff) < SWIPE_THRESHOLD) return;
-    if (diff > 0) goNext();
-    else goPrev();
-  }, [goNext, goPrev]);
+    const prevIdx = index <= 0 ? items.length - 1 : index - 1;
+    const nextIdx = index >= items.length - 1 ? 0 : index + 1;
+    const links: HTMLLinkElement[] = [];
 
-  const onTouchMove = useCallback((e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-  }, []);
+    [prevIdx, nextIdx].forEach((idx) => {
+      const item = items[idx];
+      if (item?.type === 'image' && item.image) {
+        const url = urlFor(item.image)?.width(GALLERY_IMAGE_SIZE).height(GALLERY_IMAGE_SIZE).fit('max').url();
+        if (url) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = url;
+          document.head.appendChild(link);
+          links.push(link);
+        }
+      }
+    });
+
+    return () => {
+      links.forEach((l) => {
+        if (l.parentNode) l.parentNode.removeChild(l);
+      });
+    };
+  }, [index, items]);
 
   if (items.length === 0) {
     return (
@@ -67,9 +104,6 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
     );
   }
 
-  const prevIndex = index <= 0 ? items.length - 1 : index - 1;
-  const nextIndex = index >= items.length - 1 ? 0 : index + 1;
-  const nextItem = items[nextIndex];
   const currentImageUrl =
     current?.type === 'image' && current.image
       ? urlFor(current.image)?.width(GALLERY_IMAGE_SIZE).height(GALLERY_IMAGE_SIZE).fit('max').url() ?? ''
@@ -77,22 +111,27 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
   const currentBlur = current?.type === 'image' && current.image ? getBlurDataURL(current.image) : undefined;
 
   return (
-    <div
-      ref={containerRef}
-      className="relative touch-pan-y"
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-    >
+    <div className="relative">
+      {/* Carousel container */}
       <div className="flex items-center justify-center min-h-[60vh] relative">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
             key={current?._key ?? index}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="relative w-full max-w-4xl aspect-[3/4] md:aspect-auto md:max-h-[80vh]"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: CAROUSEL_SLIDE_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.15}
+            onDragEnd={(_, info) => {
+              if (items.length <= 1) return;
+              if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -SWIPE_VELOCITY) goNext();
+              else if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > SWIPE_VELOCITY) goPrev();
+            }}
+            className="relative w-full max-w-4xl aspect-[3/4] md:aspect-auto md:max-h-[80vh] cursor-grab active:cursor-grabbing"
           >
             {current?.type === 'image' && current.image && currentImageUrl && (
               <Image
@@ -100,7 +139,7 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
                 alt={current.alt ?? project.title}
                 fill
                 sizes="(max-width: 768px) 100vw, 900px"
-                className="object-contain"
+                className="object-contain pointer-events-none"
                 priority={index === 0}
                 placeholder={currentBlur ? 'blur' : 'empty'}
                 blurDataURL={currentBlur}
@@ -110,43 +149,43 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
         </AnimatePresence>
       </div>
 
+      {/* Navigation arrows */}
       {items.length > 1 && (
         <>
           <button
             type="button"
             onClick={goPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+            className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
             aria-label="Previous media"
           >
-            <span className="text-2xl">←</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <path d="M12 4L6 10L12 16" />
+            </svg>
           </button>
           <button
             type="button"
             onClick={goNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+            className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
             aria-label="Next media"
           >
-            <span className="text-2xl">→</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <path d="M8 4L14 10L8 16" />
+            </svg>
           </button>
         </>
       )}
 
-      {current?.caption && (
-        <p className="mt-4 text-sm text-neutral-500 text-center max-w-xl mx-auto">{current.caption}</p>
-      )}
-
-      {/* Preload next image via hidden next/Image */}
-      {nextItem?.type === 'image' && nextItem.image && (
-        <div className="absolute inset-0 -z-10 opacity-0 pointer-events-none w-0 h-0 overflow-hidden" aria-hidden>
-          <Image
-            src={urlFor(nextItem.image)?.width(GALLERY_IMAGE_SIZE).height(GALLERY_IMAGE_SIZE).fit('max').url() ?? ''}
-            alt=""
-            width={GALLERY_IMAGE_SIZE}
-            height={GALLERY_IMAGE_SIZE}
-            className="object-contain"
-          />
-        </div>
-      )}
+      {/* Image counter + caption */}
+      <div className="mt-4 text-center">
+        {items.length > 1 && (
+          <span className="text-xs text-neutral-500 tracking-wider" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            {index + 1} / {items.length}
+          </span>
+        )}
+        {current?.caption && (
+          <p className="mt-1 text-sm text-neutral-500 max-w-xl mx-auto">{current.caption}</p>
+        )}
+      </div>
     </div>
   );
 }
