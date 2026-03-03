@@ -1,4 +1,4 @@
-import type { MediaItem, SanityImage } from './sanity';
+import type { MediaItem, SanityImage, ProjectCredit } from './sanity';
 
 export interface IndexProject {
   _id: string;
@@ -12,4 +12,5 @@ export interface IndexProject {
   gallery?: MediaItem[] | null;
   indexOrder?: number | null;
   published?: boolean | null;
+  credits?: ProjectCredit[] | null;
 }

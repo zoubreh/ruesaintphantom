@@ -16,6 +16,13 @@ export interface MediaItem {
   alt?: string | null;
 }
 
+export interface ProjectCredit {
+  _key?: string;
+  label: string;
+  value?: string | null;
+  url?: string | null;
+}
+
 export interface Project {
   _id: string;
   _type: 'project';
@@ -29,6 +36,7 @@ export interface Project {
   gallery?: MediaItem[] | null;
   indexOrder?: number | null;
   published?: boolean | null;
+  credits?: ProjectCredit[] | null;
 }
 
 export interface SiteSettings {

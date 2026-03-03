@@ -53,6 +53,26 @@ export function ProjectView({
       </div>
       <div className="px-4 pb-12 md:px-6">
         <MediaViewer project={project} onClose={close} />
+        {project.credits && project.credits.length > 0 && (
+          <div className="mt-12 pt-8 border-t border-border/50 text-sm text-neutral-500">
+            <dl className="space-y-1">
+              {project.credits.map((c, i) => (
+                <div key={i} className="flex flex-wrap gap-x-2 gap-y-0">
+                  <dt className="uppercase tracking-wider text-neutral-400">{c.label}</dt>
+                  <dd>
+                    {c.url ? (
+                      <a href={c.url} target="_blank" rel="noopener noreferrer" className="hover:text-white underline focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded">
+                        {c.value || c.url}
+                      </a>
+                    ) : (
+                      <span>{c.value}</span>
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
       </div>
     </>
   );
@@ -62,10 +82,10 @@ export function ProjectView({
       <AnimatePresence>
         <motion.div
           className="fixed inset-0 z-40 bg-surface overflow-y-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isClosing ? 0 : 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: CLOSE_DURATION }}
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: isClosing ? 0 : 1, scale: isClosing ? 0.98 : 1 }}
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: CLOSE_DURATION, ease: 'easeOut' }}
           onAnimationComplete={onCloseAnimationComplete}
         >
           {content}

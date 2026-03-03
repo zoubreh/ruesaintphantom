@@ -63,7 +63,7 @@ pnpm start
 
 - **Site Settings** (singleton): site title, SEO, OG image, social links, contact, footer.
 - **Info Page** (singleton): representation, address, contact, imprint, sections.
-- **Projects**: title, slug, year, client, tags, description, cover, gallery (drag-and-drop reorder). Each gallery item: image (with hotspot/crop) or video URL + poster, caption, credit, alt.  
+- **Projects**: title, slug, year, client, tags, description, cover, gallery (drag-and-drop reorder), credits (label/value/url). Each gallery item: image (with hotspot/crop) or video URL + poster, caption, credit, alt.  
 - **Ordering**: `indexOrder` for projects on the index; gallery order = array order in Sanity.
 - **Published**: if `published` is false, the project is excluded from the index.
 
@@ -71,7 +71,7 @@ pnpm start
 
 - `/` — Index (image bank: all project images in one flat grid; hover = discrete overlay with title/year/client; click = project modal; back restores scroll)
 - `/info` — Info page
-- `/project/[slug]` — Project (full page on direct load or refresh; from index opens as modal, URL `/project/slug`, back restores scroll)
+- `/projects/[slug]` — Project (full page on direct load or refresh; from index opens as modal, URL `/projects/slug`, back restores scroll)
 - `/studio` — Sanity Studio (embedded)
 
 ## Seed content (3 fake projects)
@@ -85,7 +85,7 @@ pnpm start
 
 - **Home = image bank**: all images from all projects in one flat grid (order: project `indexOrder`, then cover + gallery order). No visual separation by project; hover shows discrete overlay (title, year, client); click opens project.
 - Responsive grid: 2 cols mobile, 4–6 cols desktop, thin gap, full width, lazy load.
-- Modal route: open project from index → URL `/project/slug`, close → back to index with scroll restored; refresh on `/project/slug` shows full project page.
+- Modal route: open project from index → URL `/projects/slug`, close → back to index with scroll restored; refresh on `/projects/slug` shows full project page.
 - Project gallery: next/prev (UI + keyboard), preload next image, ESC and close button.
 - `next/image` everywhere, correct `sizes`, Sanity LQIP blur placeholder.
 - SEO: `generateMetadata` for index, info, project (with OG cover); sitemap; robots.txt.

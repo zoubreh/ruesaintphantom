@@ -12,7 +12,8 @@ const projectFields = `
   coverImage,
   gallery,
   indexOrder,
-  published
+  published,
+  credits
 `;
 
 /** Projects for index (published only, ordered by indexOrder). */

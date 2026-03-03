@@ -5,7 +5,7 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ruesaintphantom.com
 export default async function sitemap() {
   const projects = await getIndexProjects();
   const projectUrls = projects.map((p) => ({
-    url: `${baseUrl}/project/${p.slug}`,
+    url: `${baseUrl}/projects/${p.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,

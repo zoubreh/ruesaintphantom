@@ -19,7 +19,7 @@ export function ProjectCard({ project, priority = false }: { project: IndexProje
   return (
     <Link
       ref={linkRef}
-      href={`/project/${project.slug}`}
+      href={`/projects/${project.slug}`}
       className="block relative aspect-[3/4] overflow-hidden rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}

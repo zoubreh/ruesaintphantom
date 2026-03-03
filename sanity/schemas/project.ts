@@ -69,6 +69,28 @@ export default defineType({
       type: 'boolean',
       initialValue: true,
     }),
+    defineField({
+      name: 'credits',
+      title: 'Credits',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            { name: 'label', type: 'string', title: 'Label', validation: (Rule) => Rule.required() },
+            { name: 'value', type: 'string', title: 'Value' },
+            { name: 'url', type: 'url', title: 'Link (optional)' },
+          ],
+          preview: {
+            select: { label: 'label', value: 'value' },
+            prepare({ label, value }) {
+              return { title: label || value || 'Credit' };
+            },
+          },
+        },
+      ],
+      description: 'Photography, Set design, etc.',
+    }),
   ],
   preview: {
     select: { title: 'title', media: 'coverImage', published: 'published' },

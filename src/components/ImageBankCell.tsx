@@ -31,7 +31,7 @@ export function ImageBankCell({ item, priority = false }: { item: FlattenedGridI
 
   return (
     <Link
-      href={`/project/${item.projectSlug}`}
+      href={`/projects/${item.projectSlug}`}
       className="block relative aspect-[3/4] overflow-hidden min-w-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-inset"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
