@@ -1,0 +1,20 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next.js
+.next
+out
+
+# Env (ne pas pousser les secrets)
+.env
+.env.local
+.env.*.local
+
+# Sanity
+sanity/dist
+
+# Misc
+.DS_Store
+*.log
+.vercel
