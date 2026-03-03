@@ -21,14 +21,10 @@ export const indexProjectsQuery = `*[_type == "project" && published == true] | 
   ${projectFields}
 }`;
 
-/** A) Home: per-project items (cover + gallery in order). Flatten in app with flatMap for full grid. */
+/** Home: per-project items (cover + gallery). Flatten in app to one array. Each item: projectSlug, projectTitle, year, client, image. */
 export const homeGridQuery = `*[_type == "project" && published == true] | order(indexOrder asc) {
-  "slug": slug.current,
-  "title": title,
-  "year": year,
-  "client": client,
   "items": [
-    { "id": _id + "-cover", "projectSlug": slug.current, "projectTitle": title, "year": year, "client": client, "type": "image", "image": coverImage, "alt": title, "caption": null, "credit": null, "videoUrl": null },
+    { "id": _id + "-cover", "projectSlug": slug.current, "projectTitle": title, "year": year, "client": client, "type": "image", "image": coverImage, "alt": title },
     ...(gallery[] {
       "id": _id + "-" + _key,
       "projectSlug": slug.current,
@@ -37,10 +33,7 @@ export const homeGridQuery = `*[_type == "project" && published == true] | order
       "client": client,
       "type": type,
       "image": select(type == "image" => image, type == "video" => poster),
-      "alt": alt,
-      "caption": caption,
-      "credit": credit,
-      "videoUrl": select(type == "video" => videoUrl)
+      "alt": alt
     })
   ]
 }`;
@@ -88,4 +81,4 @@ export interface HomeGridItemResult {
   credit?: string | null;
   videoUrl?: string | null;
 }
-export type HomeGridQueryResult = { slug: string; title: string; year?: number | null; client?: string | null; items: HomeGridItemResult[] }[];
+export type HomeGridQueryResult = { items: HomeGridItemResult[] }[];

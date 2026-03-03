@@ -12,10 +12,24 @@ export async function generateMetadata() {
 export default async function InfoPage() {
   const info = await getInfoPage();
 
-  if (!info) {
+  const hasContent =
+    info &&
+    (info.representedBy ||
+      info.address ||
+      info.contactEmail ||
+      (info.sections && info.sections.length > 0) ||
+      info.imprintText ||
+      info.copyright ||
+      info.programmingBy);
+
+  if (!info || !hasContent) {
     return (
-      <div className="max-w-prose mx-auto px-4 py-16 text-neutral-500">
-        <p className="text-sm">No info content yet.</p>
+      <div className="max-w-prose mx-auto px-4 py-16 text-neutral-500 text-sm">
+        <p>
+          {!info
+            ? 'No info content yet.'
+            : 'Add your content in Sanity Studio at /studio.'}
+        </p>
       </div>
     );
   }

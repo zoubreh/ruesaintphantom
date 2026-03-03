@@ -10,7 +10,12 @@ export async function generateMetadata() {
   };
 }
 
+/** Home = ONE continuous image bank grid. No project titles, no project cards. */
 export default async function IndexPage() {
   const items = await getFlattenedGridItems();
-  return <ImageBankGrid items={items} />;
+  return (
+    <div data-page="index" className="w-full">
+      <ImageBankGrid items={items} />
+    </div>
+  );
 }
