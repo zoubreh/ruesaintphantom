@@ -12,7 +12,7 @@ export async function generateMetadata() {
 function InfoSection({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
+      <h2 className="text-xs font-medium uppercase tracking-wider text-muted mb-2">
         {heading}
       </h2>
       {children}
@@ -37,15 +37,15 @@ export default async function InfoPage() {
     const year = new Date().getFullYear();
     return (
       <div className="max-w-prose mx-auto px-4 py-12 md:py-16">
-        <div className="space-y-10 text-sm text-neutral-300">
+        <div className="space-y-10 text-sm text-foreground-secondary">
           <InfoSection heading="Studio">
-            <p className="text-neutral-200">RUESAINTPHANTOM</p>
+            <p className="text-foreground">RUESAINTPHANTOM</p>
           </InfoSection>
 
           <InfoSection heading="Contact">
             <a
               href="mailto:contact@ruesaintphantom.com"
-              className="text-neutral-200 underline hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+              className="text-foreground underline hover:text-foreground-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded"
             >
               contact@ruesaintphantom.com
             </a>
@@ -56,13 +56,13 @@ export default async function InfoPage() {
               href="https://instagram.com/ruesaintphantom"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-neutral-200 underline hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+              className="text-foreground underline hover:text-foreground-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded"
             >
               Instagram
             </a>
           </InfoSection>
 
-          <p className="text-neutral-500 text-xs pt-8">
+          <p className="text-muted text-xs pt-8">
             &copy; {year} RUESAINTPHANTOM. All rights reserved.
           </p>
         </div>
@@ -72,16 +72,16 @@ export default async function InfoPage() {
 
   return (
     <div className="max-w-prose mx-auto px-4 py-12 md:py-16">
-      <div className="space-y-10 text-sm text-neutral-300">
+      <div className="space-y-10 text-sm text-foreground-secondary">
         {info.representedBy && (
           <InfoSection heading="Represented by">
-            <p className="text-neutral-200">{info.representedBy}</p>
+            <p className="text-foreground">{info.representedBy}</p>
           </InfoSection>
         )}
 
         {info.address && (
           <InfoSection heading="Address">
-            <p className="whitespace-pre-line text-neutral-200">{info.address}</p>
+            <p className="whitespace-pre-line text-foreground">{info.address}</p>
           </InfoSection>
         )}
 
@@ -89,7 +89,7 @@ export default async function InfoPage() {
           <InfoSection heading="Contact">
             <a
               href={`mailto:${info.contactEmail}`}
-              className="text-neutral-200 underline hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+              className="text-foreground underline hover:text-foreground-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded"
             >
               {info.contactEmail}
             </a>
@@ -98,23 +98,23 @@ export default async function InfoPage() {
 
         {info.programmingBy && (
           <InfoSection heading="Programming by">
-            <p className="text-neutral-200">{info.programmingBy}</p>
+            <p className="text-foreground">{info.programmingBy}</p>
           </InfoSection>
         )}
 
         {info.sections?.map((section, i) => (
           <section key={i}>
             {section.heading && (
-              <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
+              <h2 className="text-xs font-medium uppercase tracking-wider text-muted mb-2">
                 {section.heading}
               </h2>
             )}
-            {section.body && <p className="text-neutral-200 whitespace-pre-line">{section.body}</p>}
+            {section.body && <p className="text-foreground whitespace-pre-line">{section.body}</p>}
             {section.links?.map((link, j) => (
               <a
                 key={j}
                 href={link.href ?? '#'}
-                className="block text-neutral-200 underline hover:text-white mt-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+                className="block text-foreground underline hover:text-foreground-secondary mt-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded"
               >
                 {link.label ?? link.href}
               </a>
@@ -124,12 +124,12 @@ export default async function InfoPage() {
 
         {info.imprintText && (
           <InfoSection heading="Imprint">
-            <p className="text-neutral-200 whitespace-pre-line">{info.imprintText}</p>
+            <p className="text-foreground whitespace-pre-line">{info.imprintText}</p>
           </InfoSection>
         )}
 
         {info.copyright && (
-          <p className="text-neutral-500 text-xs pt-8">{info.copyright}</p>
+          <p className="text-muted text-xs pt-8">{info.copyright}</p>
         )}
       </div>
     </div>

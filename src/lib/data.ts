@@ -1,17 +1,19 @@
 import { client } from './sanity';
 import {
   indexProjectsQuery,
-  homeGridQuery,
+  projectGridQuery,
+  allProjectSlugsQuery,
   projectBySlugQuery,
   siteSettingsQuery,
   infoPageQuery,
   type IndexProjectsResult,
-  type HomeGridQueryResult,
+  type ProjectGridQueryResult,
+  type AllProjectSlugsResult,
   type ProjectBySlugResult,
   type SiteSettingsResult,
   type InfoPageResult,
 } from './queries';
-import type { FlattenedGridItem } from '@/types/grid';
+import type { ProjectGridItem } from '@/types/grid';
 
 const REVALIDATE = 60;
 
@@ -30,26 +32,20 @@ export async function getIndexProjects(): Promise<IndexProjectsResult> {
   );
 }
 
-/** Flatten all gallery images: one GROQ (ordered by project indexOrder, then gallery order), then flatMap. */
-export async function getFlattenedGridItems(): Promise<FlattenedGridItem[]> {
-  const rows = await safeFetch(
-    () => client.fetch<HomeGridQueryResult>(homeGridQuery, {}, { next: { revalidate: REVALIDATE } }),
+/** Homepage grid items — one cover per project with gridSize. */
+export async function getProjectsForGrid(): Promise<ProjectGridItem[]> {
+  return safeFetch(
+    () => client.fetch<ProjectGridQueryResult>(projectGridQuery, {}, { next: { revalidate: REVALIDATE } }),
     []
   );
-  const items: FlattenedGridItem[] = [];
-  for (const item of rows.flatMap((p) => p.items)) {
-    items.push({
-      id: item.id,
-      projectSlug: item.projectSlug,
-      projectTitle: item.projectTitle,
-      year: item.year,
-      client: item.client,
-      type: item.type,
-      image: item.image?.asset?._ref ? item.image : null,
-      alt: item.alt ?? undefined,
-    });
-  }
-  return items;
+}
+
+/** Ordered slug list for next/prev navigation. */
+export async function getProjectNavigation(): Promise<AllProjectSlugsResult> {
+  return safeFetch(
+    () => client.fetch<AllProjectSlugsResult>(allProjectSlugsQuery, {}, { next: { revalidate: REVALIDATE } }),
+    []
+  );
 }
 
 export async function getProjectBySlug(slug: string): Promise<ProjectBySlugResult> {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useProjectTitle } from '@/context/ProjectTitleContext';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
@@ -14,18 +15,26 @@ import {
 } from '@/lib/constants';
 import type { IndexProject } from '@/types/project';
 
+export interface ProjectNavLink {
+  slug: string;
+  title: string;
+}
+
 export function ProjectView({
   project,
   isModal,
+  prevProject,
+  nextProject,
 }: {
   project: IndexProject;
   isModal: boolean;
+  prevProject?: ProjectNavLink | null;
+  nextProject?: ProjectNavLink | null;
 }) {
   const router = useRouter();
   const { setProjectTitle } = useProjectTitle();
   const [isClosing, setIsClosing] = useState(false);
 
-  // Scroll lock stays active for the ENTIRE modal lifetime (no premature unlock)
   useBodyScrollLock(isModal);
   const focusTrapRef = useFocusTrap(isModal && !isClosing);
 
@@ -46,7 +55,6 @@ export function ProjectView({
     if (isClosing) router.back();
   }, [isClosing, router]);
 
-  // ESC key handler on modal itself (not just MediaViewer)
   useEffect(() => {
     if (!isModal) return;
     const handler = (e: KeyboardEvent) => {
@@ -64,7 +72,7 @@ export function ProjectView({
         <button
           type="button"
           onClick={close}
-          className="min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+          className="min-h-[44px] min-w-[44px] flex items-center justify-center text-foreground-secondary hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded"
           aria-label="Close project"
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -74,15 +82,17 @@ export function ProjectView({
       </div>
       <div className="px-4 pb-12 md:px-6">
         <MediaViewer project={project} onClose={close} />
+
+        {/* Credits */}
         {project.credits && project.credits.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-border/50 text-sm text-neutral-500">
+          <div className="mt-12 pt-8 border-t border-border text-sm text-foreground-secondary">
             <dl className="space-y-1">
               {project.credits.map((c, i) => (
                 <div key={i} className="flex flex-wrap gap-x-2 gap-y-0">
-                  <dt className="uppercase tracking-wider text-neutral-400">{c.label}</dt>
+                  <dt className="uppercase tracking-wider text-muted">{c.label}</dt>
                   <dd>
                     {c.url ? (
-                      <a href={c.url} target="_blank" rel="noopener noreferrer" className="hover:text-white underline focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded">
+                      <a href={c.url} target="_blank" rel="noopener noreferrer" className="hover:text-foreground underline focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded">
                         {c.value || c.url}
                       </a>
                     ) : (
@@ -93,6 +103,36 @@ export function ProjectView({
               ))}
             </dl>
           </div>
+        )}
+
+        {/* Next / Prev project navigation */}
+        {(prevProject || nextProject) && (
+          <nav className="mt-12 pt-8 border-t border-border flex items-center justify-between" aria-label="Project navigation">
+            {prevProject ? (
+              <Link
+                href={`/projects/${prevProject.slug}`}
+                className="group flex items-center gap-2 text-sm text-foreground-secondary hover:text-foreground transition-colors"
+                scroll={false}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" className="transition-transform group-hover:-translate-x-0.5">
+                  <path d="M10 3L5 8L10 13" />
+                </svg>
+                <span className="uppercase tracking-wider text-xs">{prevProject.title}</span>
+              </Link>
+            ) : <span />}
+            {nextProject ? (
+              <Link
+                href={`/projects/${nextProject.slug}`}
+                className="group flex items-center gap-2 text-sm text-foreground-secondary hover:text-foreground transition-colors"
+                scroll={false}
+              >
+                <span className="uppercase tracking-wider text-xs">{nextProject.title}</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
+                  <path d="M6 3L11 8L6 13" />
+                </svg>
+              </Link>
+            ) : <span />}
+          </nav>
         )}
       </div>
     </>
@@ -107,7 +147,6 @@ export function ProjectView({
         aria-modal="true"
         aria-label={project.title}
       >
-        {/* Backdrop — click outside to close */}
         <motion.div
           className="absolute inset-0 bg-surface"
           initial={{ opacity: 0 }}
@@ -116,7 +155,6 @@ export function ProjectView({
           onClick={close}
           aria-hidden="true"
         />
-        {/* Content — slides up */}
         <motion.div
           className="absolute inset-0 overflow-y-auto modal-scroll-container"
           initial={{ opacity: 0, y: 30 }}

@@ -16,6 +16,8 @@ export interface MediaItem {
   alt?: string | null;
 }
 
+export type GridSize = 'S' | 'M' | 'L' | 'TALL' | 'WIDE';
+
 export interface ProjectCredit {
   _key?: string;
   label: string;
@@ -34,6 +36,8 @@ export interface Project {
   description?: string | null;
   coverImage: SanityImage;
   gallery?: MediaItem[] | null;
+  gridSize?: GridSize | null;
+  category?: string | null;
   indexOrder?: number | null;
   published?: boolean | null;
   credits?: ProjectCredit[] | null;

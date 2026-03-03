@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getProjectBySlug, getIndexProjects, getSiteSettings } from '@/lib/data';
+import { getProjectBySlug, getIndexProjects, getSiteSettings, getProjectNavigation } from '@/lib/data';
 import { urlFor } from '@/lib/image';
 import { ProjectView } from '@/components/ProjectView';
 
@@ -34,7 +34,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const [project, allSlugs] = await Promise.all([
+    getProjectBySlug(slug),
+    getProjectNavigation(),
+  ]);
   if (!project) notFound();
-  return <ProjectView project={project} isModal={false} />;
+
+  const currentIndex = allSlugs.findIndex((p) => p.slug === slug);
+  const prevProject = currentIndex > 0 ? allSlugs[currentIndex - 1] : null;
+  const nextProject = currentIndex < allSlugs.length - 1 ? allSlugs[currentIndex + 1] : null;
+
+  return (
+    <ProjectView
+      project={project}
+      isModal={false}
+      prevProject={prevProject}
+      nextProject={nextProject}
+    />
+  );
 }

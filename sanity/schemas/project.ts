@@ -57,6 +57,28 @@ export default defineType({
       of: [{ type: 'mediaItem' }],
     }),
     defineField({
+      name: 'gridSize',
+      title: 'Grid Size (Homepage)',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'S — Small (1x1)', value: 'S' },
+          { title: 'M — Medium (2x1)', value: 'M' },
+          { title: 'L — Large (2x2)', value: 'L' },
+          { title: 'TALL — Tall (1x2)', value: 'TALL' },
+          { title: 'WIDE — Wide (2x1)', value: 'WIDE' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'M',
+      description: 'Controls how large this project appears on the homepage grid.',
+    }),
+    defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+    }),
+    defineField({
       name: 'indexOrder',
       title: 'Index Order',
       type: 'number',

@@ -1,13 +1,13 @@
-import type { SanityImage } from './sanity';
+import type { SanityImage, GridSize } from './sanity';
 
-/** One image (or video poster) in the flattened home grid. Order = project indexOrder, then cover, then gallery order. */
-export interface FlattenedGridItem {
-  id: string;
-  projectSlug: string;
-  projectTitle: string;
+/** One project tile in the homepage grid. One entry per project. */
+export interface ProjectGridItem {
+  _id: string;
+  slug: string;
+  title: string;
   year?: number | null;
   client?: string | null;
-  type: 'image' | 'video';
-  image: SanityImage | null;
-  alt?: string | null;
+  category?: string | null;
+  coverImage: SanityImage;
+  gridSize: GridSize;
 }

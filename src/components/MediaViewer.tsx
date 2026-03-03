@@ -55,7 +55,7 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
     setIndex((i) => (i >= items.length - 1 ? 0 : i + 1));
   }, [items.length]);
 
-  // Keyboard: arrows + ESC (ESC also handled in ProjectView, but kept here for standalone)
+  // Keyboard: arrows + ESC
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -66,7 +66,7 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
     return () => window.removeEventListener('keydown', handler);
   }, [onClose, goPrev, goNext]);
 
-  // Preload adjacent images via <link rel="preload">
+  // Preload adjacent images
   useEffect(() => {
     if (items.length <= 1) return;
 
@@ -98,7 +98,7 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
 
   if (items.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh] text-neutral-500">
+      <div className="flex items-center justify-center min-h-[50vh] text-foreground-secondary">
         <p className="text-sm">No media</p>
       </div>
     );
@@ -155,7 +155,7 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
           <button
             type="button"
             onClick={goPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+            className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-muted hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded"
             aria-label="Previous media"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -165,7 +165,7 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
           <button
             type="button"
             onClick={goNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+            className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-muted hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 rounded"
             aria-label="Next media"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -178,12 +178,12 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
       {/* Image counter + caption */}
       <div className="mt-4 text-center">
         {items.length > 1 && (
-          <span className="text-xs text-neutral-500 tracking-wider" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          <span className="text-xs text-muted tracking-wider" style={{ fontVariantNumeric: 'tabular-nums' }}>
             {index + 1} / {items.length}
           </span>
         )}
         {current?.caption && (
-          <p className="mt-1 text-sm text-neutral-500 max-w-xl mx-auto">{current.caption}</p>
+          <p className="mt-1 text-sm text-foreground-secondary max-w-xl mx-auto">{current.caption}</p>
         )}
       </div>
     </div>

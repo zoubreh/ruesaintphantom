@@ -1,4 +1,4 @@
-import type { MediaItem, SanityImage, ProjectCredit } from './sanity';
+import type { MediaItem, SanityImage, ProjectCredit, GridSize } from './sanity';
 
 export interface IndexProject {
   _id: string;
@@ -10,6 +10,8 @@ export interface IndexProject {
   description?: string | null;
   coverImage: SanityImage;
   gallery?: MediaItem[] | null;
+  gridSize?: GridSize | null;
+  category?: string | null;
   indexOrder?: number | null;
   published?: boolean | null;
   credits?: ProjectCredit[] | null;
