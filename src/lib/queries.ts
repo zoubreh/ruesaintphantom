@@ -10,7 +10,16 @@ const projectFields = `
   tags,
   description,
   coverImage,
-  gallery,
+  gallery[] {
+    _key,
+    type,
+    image,
+    videoUrl,
+    poster,
+    caption,
+    credit,
+    alt
+  },
   indexOrder,
   published,
   credits
