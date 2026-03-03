@@ -15,16 +15,18 @@ export function HeaderNav() {
       <nav className="flex items-center gap-4 text-sm uppercase tracking-wide text-neutral-300" aria-label="Main">
         <Link
           href="/"
-          className={`min-h-[44px] min-w-[44px] flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded ${isIndex ? 'text-white' : 'hover:text-white'}`}
+          className={`min-h-[44px] min-w-[44px] flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded ${isIndex ? 'text-white font-medium' : 'hover:text-white'}`}
           aria-current={isIndex ? 'page' : undefined}
         >
-          <span className={isIndex ? 'text-white' : ''}>●</span> Index
+          {isIndex ? <span className="text-white" aria-hidden>●</span> : null}
+          Index
         </Link>
         <Link
           href="/info"
-          className={`min-h-[44px] min-w-[44px] flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded ${isInfo ? 'text-white' : 'hover:text-white'}`}
+          className={`min-h-[44px] min-w-[44px] flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded ${isInfo ? 'text-white font-medium' : 'hover:text-white'}`}
           aria-current={isInfo ? 'page' : undefined}
         >
+          {isInfo ? <span className="text-white" aria-hidden>●</span> : null}
           Info
         </Link>
       </nav>
