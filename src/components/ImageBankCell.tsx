@@ -2,23 +2,16 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { urlFor, getBlurDataURL } from '@/lib/image';
+import { usePointerDevice } from '@/hooks/usePointerDevice';
+import { INDEX_SCROLL_KEY } from '@/lib/constants';
 import type { FlattenedGridItem } from '@/types/grid';
-
-const INDEX_SCROLL_KEY = 'indexScrollY';
 
 export function ImageBankCell({ item, priority = false }: { item: FlattenedGridItem; priority?: boolean }) {
   const [hover, setHover] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(pointer: fine)');
-    setIsDesktop(mq.matches);
-    const on = () => setIsDesktop(mq.matches);
-    mq.addEventListener('change', on);
-    return () => mq.removeEventListener('change', on);
-  }, []);
+  const isDesktop = usePointerDevice();
   const coverUrl = urlFor(item.image);
   const src = coverUrl?.width(800).height(800).fit('max').url() ?? '';
   const blurUrl = getBlurDataURL(item.image);
@@ -44,7 +37,6 @@ export function ImageBankCell({ item, priority = false }: { item: FlattenedGridI
         fill
         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
         className="object-cover transition-transform duration-300 ease-out"
-        style={{ objectFit: 'cover' }}
         priority={priority}
         placeholder={blurUrl ? 'blur' : 'empty'}
         blurDataURL={blurUrl}

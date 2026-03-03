@@ -13,7 +13,7 @@ export default function SiteLayout({
     <ProjectTitleProvider>
       <ScrollRestoration />
       <HeaderNav />
-      <main className="min-h-screen overflow-x-hidden w-full">
+      <main className="min-h-screen w-full">
         {children}
         {modal}
       </main>

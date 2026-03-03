@@ -15,7 +15,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="antialiased">
-      <body className={`${inter.variable} font-sans bg-surface text-neutral-200 min-h-screen overflow-x-hidden`}>
+      <body className={`${inter.variable} font-sans bg-surface text-neutral-200 min-h-screen`}>
         {children}
       </body>
     </html>

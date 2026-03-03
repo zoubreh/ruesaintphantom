@@ -1,9 +1,14 @@
 import { notFound } from 'next/navigation';
-import { getProjectBySlug, getSiteSettings } from '@/lib/data';
-import { buildImageUrl } from '@/lib/image';
+import { getProjectBySlug, getIndexProjects, getSiteSettings } from '@/lib/data';
+import { urlFor } from '@/lib/image';
 import { ProjectView } from '@/components/ProjectView';
 
 export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const projects = await getIndexProjects();
+  return projects.map((p) => ({ slug: p.slug }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -12,9 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!project) return { title: 'Project' };
   const title = project.title;
   const ogImage = project.coverImage
-    ? buildImageUrl(project.coverImage, { width: 1200, height: 630, fit: 'fill' })
+    ? urlFor(project.coverImage)?.width(1200).height(630).fit('fill').url() ?? null
     : settings?.ogImage
-      ? buildImageUrl(settings.ogImage, { width: 1200, height: 630, fit: 'fill' })
+      ? urlFor(settings.ogImage)?.width(1200).height(630).fit('fill').url() ?? null
       : null;
   return {
     title,

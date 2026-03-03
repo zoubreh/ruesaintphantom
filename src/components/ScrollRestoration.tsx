@@ -2,8 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-
-const INDEX_SCROLL_KEY = 'indexScrollY'; // saved when opening /projects/[slug] from home
+import { INDEX_SCROLL_KEY } from '@/lib/constants';
 
 export function ScrollRestoration() {
   const pathname = usePathname();

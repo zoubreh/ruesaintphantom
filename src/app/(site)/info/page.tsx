@@ -9,6 +9,17 @@ export async function generateMetadata() {
   };
 }
 
+function InfoSection({ heading, children }: { heading: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
+        {heading}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
 export default async function InfoPage() {
   const info = await getInfoPage();
 
@@ -38,44 +49,32 @@ export default async function InfoPage() {
     <div className="max-w-prose mx-auto px-4 py-12 md:py-16">
       <div className="space-y-10 text-sm text-neutral-300">
         {info.representedBy && (
-          <section>
-            <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
-              Represented by
-            </h2>
+          <InfoSection heading="Represented by">
             <p className="text-neutral-200">{info.representedBy}</p>
-          </section>
+          </InfoSection>
         )}
 
         {info.address && (
-          <section>
-            <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
-              Address
-            </h2>
+          <InfoSection heading="Address">
             <p className="whitespace-pre-line text-neutral-200">{info.address}</p>
-          </section>
+          </InfoSection>
         )}
 
         {info.contactEmail && (
-          <section>
-            <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
-              Contact
-            </h2>
+          <InfoSection heading="Contact">
             <a
               href={`mailto:${info.contactEmail}`}
               className="text-neutral-200 underline hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
             >
               {info.contactEmail}
             </a>
-          </section>
+          </InfoSection>
         )}
 
         {info.programmingBy && (
-          <section>
-            <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
-              Programming by
-            </h2>
+          <InfoSection heading="Programming by">
             <p className="text-neutral-200">{info.programmingBy}</p>
-          </section>
+          </InfoSection>
         )}
 
         {info.sections?.map((section, i) => (
@@ -99,12 +98,9 @@ export default async function InfoPage() {
         ))}
 
         {info.imprintText && (
-          <section>
-            <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
-              Imprint
-            </h2>
+          <InfoSection heading="Imprint">
             <p className="text-neutral-200 whitespace-pre-line">{info.imprintText}</p>
-          </section>
+          </InfoSection>
         )}
 
         {info.copyright && (

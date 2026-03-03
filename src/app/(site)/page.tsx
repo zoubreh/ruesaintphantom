@@ -1,12 +1,13 @@
-import { getFlattenedGridItems } from '@/lib/data';
+import { getFlattenedGridItems, getSiteSettings } from '@/lib/data';
 import { ImageBankGrid } from '@/components/ImageBankGrid';
 
 export const revalidate = 60;
 
 export async function generateMetadata() {
+  const settings = await getSiteSettings();
   return {
     title: 'Index',
-    description: 'Image-first minimal portfolio.',
+    description: settings?.seoDescription ?? 'Image-first minimal portfolio.',
   };
 }
 
@@ -14,7 +15,7 @@ export async function generateMetadata() {
 export default async function IndexPage() {
   const items = await getFlattenedGridItems();
   return (
-    <div data-page="index" className="w-full">
+    <div className="w-full">
       <ImageBankGrid items={items} />
     </div>
   );

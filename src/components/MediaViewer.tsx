@@ -4,11 +4,9 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { urlFor, getBlurDataURL } from '@/lib/image';
+import { SWIPE_THRESHOLD, GALLERY_IMAGE_SIZE } from '@/lib/constants';
 import type { IndexProject } from '@/types/project';
 import type { MediaItem } from '@/types/sanity';
-
-const SWIPE_THRESHOLD = 50;
-const GALLERY_IMAGE_SIZE = 1200;
 
 function getMediaItems(project: IndexProject): MediaItem[] {
   const gallery = project.gallery?.filter((m) => m.type === 'image' && m.image) ?? [];

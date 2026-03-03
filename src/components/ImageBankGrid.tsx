@@ -2,12 +2,12 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { ImageBankCell } from './ImageBankCell';
+import { GRID_BATCH_SIZE, GRID_LOAD_MARGIN } from '@/lib/constants';
 import type { FlattenedGridItem } from '@/types/grid';
 
 export function ImageBankGrid({ items }: { items: FlattenedGridItem[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState(24);
-  const batch = 24;
+  const [visibleCount, setVisibleCount] = useState(GRID_BATCH_SIZE);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -15,9 +15,9 @@ export function ImageBankGrid({ items }: { items: FlattenedGridItem[] }) {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting)
-          setVisibleCount((n) => Math.min(n + batch, items.length));
+          setVisibleCount((n) => Math.min(n + GRID_BATCH_SIZE, items.length));
       },
-      { rootMargin: '400px', threshold: 0 }
+      { rootMargin: GRID_LOAD_MARGIN, threshold: 0 }
     );
     const sentinel = el.querySelector('[data-sentinel]');
     if (sentinel) observer.observe(sentinel);
