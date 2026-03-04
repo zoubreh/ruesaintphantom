@@ -25,7 +25,6 @@ export function ProjectView({
   const { setProjectTitle } = useProjectTitle();
   const [isClosing, setIsClosing] = useState(false);
 
-  // Scroll lock stays active for the ENTIRE modal lifetime (no premature unlock)
   useBodyScrollLock(isModal);
   const focusTrapRef = useFocusTrap(isModal && !isClosing);
 
@@ -46,7 +45,6 @@ export function ProjectView({
     if (isClosing) router.back();
   }, [isClosing, router]);
 
-  // ESC key handler on modal itself (not just MediaViewer)
   useEffect(() => {
     if (!isModal) return;
     const handler = (e: KeyboardEvent) => {
@@ -60,11 +58,11 @@ export function ProjectView({
 
   const content = (
     <>
-      <div className="sticky top-0 z-10 flex items-center justify-end px-4 py-3 md:px-6">
+      <div className="sticky top-0 z-10 flex items-center justify-end px-4 py-3 md:px-6 bg-white border-b border-[#e5e5e5]">
         <button
           type="button"
           onClick={close}
-          className="min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+          className="min-h-[44px] min-w-[44px] flex items-center justify-center text-[#525252] hover:text-[#1a1a1a] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a1a1a]"
           aria-label="Close project"
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -72,17 +70,17 @@ export function ProjectView({
           </svg>
         </button>
       </div>
-      <div className="px-4 pb-12 md:px-6">
+      <div className="px-4 pb-16 md:px-10 bg-white">
         <MediaViewer project={project} onClose={close} />
         {project.credits && project.credits.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-border/50 text-sm text-neutral-500">
-            <dl className="space-y-1">
+          <div className="mt-12 pt-8 border-t border-[#e5e5e5] text-[13px] text-[#525252]">
+            <dl className="space-y-1.5">
               {project.credits.map((c, i) => (
-                <div key={i} className="flex flex-wrap gap-x-2 gap-y-0">
-                  <dt className="uppercase tracking-wider text-neutral-400">{c.label}</dt>
-                  <dd>
+                <div key={i} className="flex flex-wrap gap-x-3 gap-y-0">
+                  <dt className="uppercase tracking-[0.04em] text-[#737373] text-[11px]">{c.label}</dt>
+                  <dd className="text-[13px] text-[#1a1a1a]">
                     {c.url ? (
-                      <a href={c.url} target="_blank" rel="noopener noreferrer" className="hover:text-white underline focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded">
+                      <a href={c.url} target="_blank" rel="noopener noreferrer" className="hover:text-[#525252] underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a1a1a]">
                         {c.value || c.url}
                       </a>
                     ) : (
@@ -107,9 +105,9 @@ export function ProjectView({
         aria-modal="true"
         aria-label={project.title}
       >
-        {/* Backdrop — click outside to close */}
+        {/* Backdrop */}
         <motion.div
-          className="absolute inset-0 bg-surface"
+          className="absolute inset-0 bg-white"
           initial={{ opacity: 0 }}
           animate={{ opacity: isClosing ? 0 : 1 }}
           transition={{ duration, ease: EASE_OUT_EXPO }}
@@ -135,7 +133,7 @@ export function ProjectView({
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       {content}
     </div>
   );

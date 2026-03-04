@@ -5,14 +5,14 @@ export const revalidate = 60;
 export async function generateMetadata() {
   return {
     title: 'Info',
-    description: 'Contact and information.',
+    description: 'Studio, services, and contact.',
   };
 }
 
 function InfoSection({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
+      <h2 className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#737373] mb-3">
         {heading}
       </h2>
       {children}
@@ -33,21 +33,44 @@ export default async function InfoPage() {
       info.copyright ||
       info.programmingBy);
 
+  const year = new Date().getFullYear();
+
   if (!info || !hasContent) {
-    const year = new Date().getFullYear();
     return (
-      <div className="max-w-prose mx-auto px-4 py-12 md:py-16">
-        <div className="space-y-10 text-sm text-neutral-300">
+      <div className="max-w-prose mx-auto px-4 sm:px-6 py-12 md:py-16">
+        <div className="space-y-10 text-[13px] text-[#1a1a1a]">
+
           <InfoSection heading="Studio">
-            <p className="text-neutral-200">RUESAINTPHANTOM</p>
+            <p className="leading-[1.7]">
+              RUESAINTPHANTOM is an independent creative studio specialising in
+              CGI, 3D, and art direction for luxury and fashion brands. Based between
+              Paris and Montréal, we craft image-forward narratives that bridge craft
+              and technology.
+            </p>
+          </InfoSection>
+
+          <InfoSection heading="Services">
+            <ul className="space-y-1.5 text-[#1a1a1a]">
+              {['Creative Direction', '3D & CGI', 'Art Direction', 'Photography', 'Brand Identity'].map((s) => (
+                <li key={s} className="uppercase tracking-[0.04em] text-[13px]">{s}</li>
+              ))}
+            </ul>
+          </InfoSection>
+
+          <InfoSection heading="Selected Clients">
+            <ul className="space-y-1.5 text-[#525252]">
+              {['Audemars Piguet', 'Hublot', 'Chanel', 'Givenchy', 'Cartier', 'Louis Vuitton'].map((c) => (
+                <li key={c} className="uppercase tracking-[0.04em] text-[13px]">{c}</li>
+              ))}
+            </ul>
           </InfoSection>
 
           <InfoSection heading="Contact">
             <a
-              href="mailto:contact@ruesaintphantom.com"
-              className="text-neutral-200 underline hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+              href="mailto:hello@ard.ac"
+              className="text-[#1a1a1a] underline hover:text-[#525252] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a1a1a]"
             >
-              contact@ruesaintphantom.com
+              hello@ard.ac
             </a>
           </InfoSection>
 
@@ -56,13 +79,13 @@ export default async function InfoPage() {
               href="https://instagram.com/ruesaintphantom"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-neutral-200 underline hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+              className="text-[#1a1a1a] underline hover:text-[#525252] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a1a1a]"
             >
               Instagram
             </a>
           </InfoSection>
 
-          <p className="text-neutral-500 text-xs pt-8">
+          <p className="text-[11px] uppercase tracking-[0.04em] text-[#737373] pt-8 border-t border-[#e5e5e5]">
             &copy; {year} RUESAINTPHANTOM. All rights reserved.
           </p>
         </div>
@@ -71,17 +94,17 @@ export default async function InfoPage() {
   }
 
   return (
-    <div className="max-w-prose mx-auto px-4 py-12 md:py-16">
-      <div className="space-y-10 text-sm text-neutral-300">
+    <div className="max-w-prose mx-auto px-4 sm:px-6 py-12 md:py-16">
+      <div className="space-y-10 text-[13px] text-[#1a1a1a]">
         {info.representedBy && (
           <InfoSection heading="Represented by">
-            <p className="text-neutral-200">{info.representedBy}</p>
+            <p>{info.representedBy}</p>
           </InfoSection>
         )}
 
         {info.address && (
           <InfoSection heading="Address">
-            <p className="whitespace-pre-line text-neutral-200">{info.address}</p>
+            <p className="whitespace-pre-line text-[#525252]">{info.address}</p>
           </InfoSection>
         )}
 
@@ -89,7 +112,7 @@ export default async function InfoPage() {
           <InfoSection heading="Contact">
             <a
               href={`mailto:${info.contactEmail}`}
-              className="text-neutral-200 underline hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+              className="text-[#1a1a1a] underline hover:text-[#525252] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a1a1a]"
             >
               {info.contactEmail}
             </a>
@@ -98,23 +121,23 @@ export default async function InfoPage() {
 
         {info.programmingBy && (
           <InfoSection heading="Programming by">
-            <p className="text-neutral-200">{info.programmingBy}</p>
+            <p className="text-[#525252]">{info.programmingBy}</p>
           </InfoSection>
         )}
 
         {info.sections?.map((section, i) => (
           <section key={i}>
             {section.heading && (
-              <h2 className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-2">
+              <h2 className="text-[11px] font-medium uppercase tracking-[0.08em] text-[#737373] mb-3">
                 {section.heading}
               </h2>
             )}
-            {section.body && <p className="text-neutral-200 whitespace-pre-line">{section.body}</p>}
+            {section.body && <p className="whitespace-pre-line text-[#525252] leading-[1.7]">{section.body}</p>}
             {section.links?.map((link, j) => (
               <a
                 key={j}
                 href={link.href ?? '#'}
-                className="block text-neutral-200 underline hover:text-white mt-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
+                className="block text-[#1a1a1a] underline hover:text-[#525252] transition-colors duration-200 mt-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a1a1a]"
               >
                 {link.label ?? link.href}
               </a>
@@ -124,12 +147,14 @@ export default async function InfoPage() {
 
         {info.imprintText && (
           <InfoSection heading="Imprint">
-            <p className="text-neutral-200 whitespace-pre-line">{info.imprintText}</p>
+            <p className="whitespace-pre-line text-[#525252] leading-[1.7]">{info.imprintText}</p>
           </InfoSection>
         )}
 
         {info.copyright && (
-          <p className="text-neutral-500 text-xs pt-8">{info.copyright}</p>
+          <p className="text-[11px] uppercase tracking-[0.04em] text-[#737373] pt-8 border-t border-[#e5e5e5]">
+            {info.copyright}
+          </p>
         )}
       </div>
     </div>

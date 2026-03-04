@@ -6,6 +6,11 @@ html {
   overflow-x: hidden;
 }
 
+/* Remove all border-radius globally for editorial sharp look */
+*, *::before, *::after {
+  border-radius: 0 !important;
+}
+
 /* Focus visible for accessibility */
 a:focus-visible,
 button:focus-visible {

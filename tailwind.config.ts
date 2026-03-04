@@ -8,13 +8,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        surface: '#0a0a0a',
-        surfaceElevated: '#141414',
+        surface: '#ffffff',
+        surfaceElevated: '#f5f5f5',
         muted: '#737373',
-        border: '#262626',
+        border: '#e5e5e5',
       },
       fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        sans: ['"Helvetica Neue"', 'Helvetica', '-apple-system', 'system-ui', 'sans-serif'],
       },
     },
   },

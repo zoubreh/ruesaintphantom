@@ -23,7 +23,6 @@ function getMediaItems(project: IndexProject): MediaItem[] {
   return gallery;
 }
 
-/* Directional slide variants */
 const slideVariants = {
   enter: (dir: number) => ({
     x: dir > 0 ? 80 : -80,
@@ -55,7 +54,6 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
     setIndex((i) => (i >= items.length - 1 ? 0 : i + 1));
   }, [items.length]);
 
-  // Keyboard: arrows + ESC (ESC also handled in ProjectView, but kept here for standalone)
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -66,14 +64,12 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
     return () => window.removeEventListener('keydown', handler);
   }, [onClose, goPrev, goNext]);
 
-  // Preload adjacent images via <link rel="preload">
+  // Preload adjacent images
   useEffect(() => {
     if (items.length <= 1) return;
-
     const prevIdx = index <= 0 ? items.length - 1 : index - 1;
     const nextIdx = index >= items.length - 1 ? 0 : index + 1;
     const links: HTMLLinkElement[] = [];
-
     [prevIdx, nextIdx].forEach((idx) => {
       const item = items[idx];
       if (item?.type === 'image' && item.image) {
@@ -88,18 +84,15 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
         }
       }
     });
-
     return () => {
-      links.forEach((l) => {
-        if (l.parentNode) l.parentNode.removeChild(l);
-      });
+      links.forEach((l) => { if (l.parentNode) l.parentNode.removeChild(l); });
     };
   }, [index, items]);
 
   if (items.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh] text-neutral-500">
-        <p className="text-sm">No media</p>
+      <div className="flex items-center justify-center min-h-[50vh] text-[#737373]">
+        <p className="text-[13px] uppercase tracking-wider">No media</p>
       </div>
     );
   }
@@ -111,9 +104,25 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
   const currentBlur = current?.type === 'image' && current.image ? getBlurDataURL(current.image) : undefined;
 
   return (
-    <div className="relative">
-      {/* Carousel container */}
-      <div className="flex items-center justify-center min-h-[60vh] relative">
+    <div className="relative pt-4 pb-6">
+      {/* Project title + meta */}
+      <div className="mb-6">
+        <h1 className="text-[18px] font-bold uppercase tracking-[0.04em] text-[#1a1a1a]">
+          {project.title}
+        </h1>
+        <div className="flex flex-wrap gap-x-3 mt-1 text-[13px] uppercase tracking-[0.027em] text-[#737373]">
+          {project.client && <span>{project.client}</span>}
+          {project.year && <span>{project.year}</span>}
+        </div>
+        {project.description && (
+          <p className="mt-4 text-[13px] text-[#525252] leading-[1.6] max-w-xl">
+            {project.description}
+          </p>
+        )}
+      </div>
+
+      {/* Carousel */}
+      <div className="flex items-center justify-center bg-[#f5f5f5] relative overflow-hidden">
         <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
             key={current?._key ?? index}
@@ -131,7 +140,7 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
               if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -SWIPE_VELOCITY) goNext();
               else if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > SWIPE_VELOCITY) goPrev();
             }}
-            className="relative w-full max-w-4xl aspect-[3/4] md:aspect-auto md:max-h-[80vh] cursor-grab active:cursor-grabbing"
+            className="relative w-full h-[60vh] md:h-[80vh] cursor-grab active:cursor-grabbing"
           >
             {current?.type === 'image' && current.image && currentImageUrl && (
               <Image
@@ -147,43 +156,43 @@ export function MediaViewer({ project, onClose }: { project: IndexProject; onClo
             )}
           </motion.div>
         </AnimatePresence>
+
+        {/* Navigation arrows */}
+        {items.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={goPrev}
+              className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#525252] hover:text-[#1a1a1a] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a1a1a] bg-white/80 border border-[#e5e5e5]"
+              aria-label="Previous image"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <path d="M12 4L6 10L12 16" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#525252] hover:text-[#1a1a1a] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a1a1a] bg-white/80 border border-[#e5e5e5]"
+              aria-label="Next image"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <path d="M8 4L14 10L8 16" />
+              </svg>
+            </button>
+          </>
+        )}
       </div>
 
-      {/* Navigation arrows */}
-      {items.length > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={goPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
-            aria-label="Previous media"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-              <path d="M12 4L6 10L12 16" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={goNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 rounded"
-            aria-label="Next media"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-              <path d="M8 4L14 10L8 16" />
-            </svg>
-          </button>
-        </>
-      )}
-
-      {/* Image counter + caption */}
-      <div className="mt-4 text-center">
+      {/* Counter + caption */}
+      <div className="mt-3 text-left">
         {items.length > 1 && (
-          <span className="text-xs text-neutral-500 tracking-wider" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          <span className="text-[11px] uppercase tracking-wider text-[#737373]" style={{ fontVariantNumeric: 'tabular-nums' }}>
             {index + 1} / {items.length}
           </span>
         )}
         {current?.caption && (
-          <p className="mt-1 text-sm text-neutral-500 max-w-xl mx-auto">{current.caption}</p>
+          <p className="mt-1 text-[13px] text-[#737373] max-w-xl">{current.caption}</p>
         )}
       </div>
     </div>

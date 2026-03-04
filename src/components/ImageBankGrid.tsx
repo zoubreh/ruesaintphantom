@@ -28,17 +28,20 @@ export function ImageBankGrid({ items }: { items: FlattenedGridItem[] }) {
 
   if (items.length === 0) {
     return (
-      <div className="py-24 text-center text-neutral-500">
-        <p className="text-sm uppercase tracking-wide">No images yet</p>
+      <div className="py-24 text-center text-[#737373]">
+        <p className="text-[13px] uppercase tracking-wider">No images yet</p>
       </div>
     );
   }
 
   return (
-    <div ref={containerRef} className="w-full max-w-full min-w-0 overflow-hidden px-3 sm:px-4 md:px-6 pt-4 md:pt-6">
-      <div className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+    <div
+      ref={containerRef}
+      className="w-full max-w-[1600px] mx-auto min-w-0 overflow-hidden px-4 sm:px-6 lg:px-10 pt-4 md:pt-6"
+    >
+      <div className="grid w-full grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-1.5">
         {visible.map((item, i) => (
-          <ImageBankCell key={item.id} item={item} priority={i < 2} index={i} />
+          <ImageBankCell key={item.id} item={item} priority={i < 4} index={i} />
         ))}
       </div>
       <div data-sentinel className="h-1 w-full" aria-hidden />

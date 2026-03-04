@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: { default: 'RUESAINTPHANTOM', template: '%s — RUESAINTPHANTOM' },
@@ -15,7 +12,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="antialiased">
-      <body className={`${inter.variable} font-sans bg-surface text-neutral-200 min-h-screen`}>
+      <body className="font-sans bg-surface text-[#1a1a1a] min-h-screen">
         {children}
       </body>
     </html>
