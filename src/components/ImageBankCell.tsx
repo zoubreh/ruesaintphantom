@@ -8,26 +8,25 @@ import { INDEX_SCROLL_KEY } from '@/lib/constants';
 import type { FlattenedGridItem } from '@/types/grid';
 
 /**
- * Repeating 8-item pattern for a variable masonry layout.
- * Works with grid-auto-flow: dense so the browser fills gaps automatically.
- *
- * Desktop (4-col): L=2×2, TALL=1×2, M=2×1, S=1×1
- * Tablet  (3-col): TALL=1×2, M=2×1, rest S
- * Mobile  (2-col): all 1×1 (readable size)
+ * Repeating 8-item pattern — variable masonry sizes.
+ * Mobile (<640px): ALL items 1×1 (no spans → readable on 2-col grid).
+ * Tablet  (sm, 3-col): TALL = 1×2 row, WIDE = 2-col span.
+ * Desktop (lg, 4-col): L = 2×2, TALL = 1×2, WIDE = 2×1, S = 1×1.
+ * grid-auto-flow: dense fills any gaps automatically.
  */
-function getSizeClasses(index: number): string {
+function getSizeClasses(index: number): { grid: string; isLarge: boolean } {
   const i = index % 8;
   switch (i) {
-    case 0: // L — big square on desktop, normal on tablet/mobile
-      return 'col-span-1 row-span-1 lg:col-span-2 lg:row-span-2';
-    case 2: // TALL — tall on tablet+desktop
-      return 'col-span-1 row-span-2';
-    case 4: // M — wide on tablet+desktop
-      return 'col-span-2 row-span-1';
+    case 0: // L — big square, desktop only
+      return { grid: 'col-span-1 row-span-1 sm:row-span-2 lg:col-span-2 lg:row-span-2', isLarge: true };
+    case 2: // TALL — 2-row from tablet up
+      return { grid: 'col-span-1 row-span-1 sm:row-span-2', isLarge: false };
+    case 4: // WIDE — 2-col from tablet up
+      return { grid: 'col-span-1 row-span-1 sm:col-span-2', isLarge: true };
     case 6: // TALL variant
-      return 'col-span-1 row-span-2 lg:col-span-1 lg:row-span-2';
-    default: // S — small square everywhere
-      return 'col-span-1 row-span-1';
+      return { grid: 'col-span-1 row-span-1 sm:row-span-2', isLarge: false };
+    default: // S — always 1×1
+      return { grid: 'col-span-1 row-span-1', isLarge: false };
   }
 }
 
@@ -40,7 +39,7 @@ export function ImageBankCell({
   priority?: boolean;
   index?: number;
 }) {
-  const sizeClasses = getSizeClasses(index);
+  const { grid: sizeClasses, isLarge } = getSizeClasses(index);
   const hasImage = !!item.image?.asset?._ref;
   const src = hasImage
     ? urlFor(item.image)?.width(1000).height(1000).fit('max').url() ?? ''
@@ -76,7 +75,10 @@ export function ImageBankCell({
               src={src}
               alt={item.alt ?? item.projectTitle}
               fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              sizes={isLarge
+                ? '(max-width: 640px) 50vw, (max-width: 1024px) 66vw, 50vw'
+                : '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw'
+              }
               className="object-cover"
               priority={priority}
               placeholder={blurUrl ? 'blur' : 'empty'}
