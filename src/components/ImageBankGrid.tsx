@@ -37,9 +37,10 @@ export function ImageBankGrid({ items }: { items: FlattenedGridItem[] }) {
   return (
     <div
       ref={containerRef}
-      className="w-full max-w-[1600px] mx-auto min-w-0 overflow-hidden px-4 sm:px-6 lg:px-10 pt-4 md:pt-6"
+      className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 pt-4 md:pt-6"
     >
-      <div className="grid w-full grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-1.5">
+      {/* 2-col mobile → 3-col tablet → 4-col desktop, dense masonry */}
+      <div className="grid masonry-grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5">
         {visible.map((item, i) => (
           <ImageBankCell key={item.id} item={item} priority={i < 4} index={i} />
         ))}

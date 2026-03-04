@@ -6,7 +6,7 @@ html {
   overflow-x: hidden;
 }
 
-/* Remove all border-radius globally for editorial sharp look */
+/* Editorial: no border-radius anywhere */
 *, *::before, *::after {
   border-radius: 0 !important;
 }
@@ -22,4 +22,30 @@ button:focus-visible {
 .modal-scroll-container {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+}
+
+/* ─── Masonry grid ─── */
+.masonry-grid {
+  grid-auto-flow: dense;
+  grid-auto-rows: 180px;
+}
+
+@media (min-width: 640px) {
+  .masonry-grid { grid-auto-rows: 220px; }
+}
+
+@media (min-width: 1024px) {
+  .masonry-grid { grid-auto-rows: 270px; }
+}
+
+/* ─── Image hover: only on real hover devices ─── */
+.cell-img img {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cell-img:hover img {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
 }
